@@ -2,9 +2,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.*;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.*;
 
 class LamodaTest {
     static final String URL = "https://www.lamoda.ru/";
@@ -20,46 +20,44 @@ class LamodaTest {
 
     @Test
     void findShoes() {
-        // Перейти в раздел Мужчинам
-        $(byXpath("/html/body/div[1]/div[2]/div[2]/a[2]")).click();
+        $(byXpath(".//a[@data-genders='men']")).click();
 
         // Перейти в раздел Обувь
-        $(byXpath("//*[@id=\"menu-wrapper\"]/div/div[2]/a[3]/span")).click();
+        $(byXpath(".//span[contains(text(),'Обувь')]")).click();
 
         // Найти на странице текст Мужская обувь
         $("html").shouldHave(text("Мужская обувь"));
+
+        // Перейти на страницу второго элемента
+        $$(byXpath(".//div[@class='products-list-item']"))
+                .get(1).click();
     }
 
     @Test
     void registration() {
         // Перейти по ссылке Войти
-        $(byXpath("/html/body/div[1]/div[2]/div[1]/span[1]")).click();
+        $(byXpath(".//span[contains(text(),'Войти')]")).click();
 
         // Перейти по ссылке Создать аккаунт
-        $(byCssSelector("body > div.popup.auth-popup.popup_visible > div > div > div.popup__content-wrapper > form.form.login-form > div.popup__header.auth-social > div.auth-social__description > span.link_blue.login-form__register.link"))
-                .click();
+        $(byXpath(".//span[contains(text(),'Создать аккаунт')]")).click();
 
         // Заполнить форму
-        $(byXpath("/html/body/div[2]/div/div/div[2]/form[2]/div[2]/div[1]/div/input"))
-                .setValue(email);
-        $(byXpath("/html/body/div[2]/div/div/div[2]/form[2]/div[2]/div[2]/div/input"))
-                .setValue(password);
-        $(byXpath("/html/body/div[2]/div/div/div[2]/form[2]/div[2]/div[3]/div/input"))
-                .setValue(password);
-        $(byXpath("/html/body/div[2]/div/div/div[2]/form[2]/div[2]/div[4]/div/input"))
-                .setValue(name);
+        $$(byXpath(".//input[@name='email']")).find(visible).setValue(email);
+        $$(byXpath(".//input[@name='password']")).find(visible).setValue(password);
+        $$(byXpath(".//input[@name='password2']")).find(visible).setValue(password);
+        $$(byXpath(".//input[@name='first_name']")).find(visible).setValue(name);
 
         // Нажать Зарегистрироваться
-        $(byXpath("/html/body/div[2]/div/div/div[2]/form[2]/div[2]/div[7]/button")).click();
+        $(byXpath(".//button[contains(text(),'Зарегистрироваться')]")).click();
     }
 
     @Test
     void findShirt() {
         // Ввести в поле поиска "рубашка"
-        $(byXpath("//*[@id=\"menu-wrapper\"]/div/div[1]/input")).setValue("рубашка");
+        $(byXpath(".//input[@type='text']")).setValue("рубашка");
 
         // Нажать на иконку поиска
-        $(byXpath("//*[@id=\"menu-wrapper\"]/div/div[1]/div[2]/div")).click();
+        $(byXpath(".//div[@class='search__button-logo']")).click();
 
         // Найти на странице текст товары по запросу «рубашка»
         $("html").shouldHave(text("Товары по запросу «рубашка»"));
@@ -68,24 +66,24 @@ class LamodaTest {
     @Test
     void regionChoice() {
         // Нажать на поле региона
-        $(byXpath("/html/body/div[1]/div[1]/div/div/div[1]/div/div[2]")).click();
+        $(byXpath(".//div[@class='v-popover']")).click();
 
         // Нажать на ссылку Определить автоматически
-        $(byXpath("/html/body/div[7]/div[3]/div/div/div[3]/div/div[2]/a")).click();
+        $(byXpath(".//a[contains(text(),'Определить автоматически')]")).click();
 
         // Нажать на кнопку Запомнить выбор
-        $(byXpath("/html/body/div[7]/div[3]/div/div/div[4]/div/button[2]")).click();
+        $(byXpath(".//button[contains(text(),'Запомнить выбор')]")).click();
     }
 
     @Test
     void onlineSupport() {
         // Нажать кнопку Хорошо
-        $(byXpath("/html/body/div[8]/div[1]/div[1]/div/button")).click();
+        $(byXpath(".//button[contains(text(),'Хорошо')]")).click();
 
         // Нажать на кнопку Онлайн-консультант
-        $(byXpath("//*[@id=\"hde-chat-widget\"]")).click();
+        $(byXpath(".//div[@id='hde-chat-widget']")).click();
 
         // Нажать на иконку Закрыть
-        $(byXpath("//*[@id=\"hde-chat-container\"]/div[1]")).click();
+        $(byXpath(".//div[contains(text(),'✕')]")).click();
     }
 }
