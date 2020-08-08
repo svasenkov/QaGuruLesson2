@@ -27,8 +27,8 @@ class LamodaTest {
         // Перейти в раздел Обувь
         $x("//*[@class='link' and contains(text(),'Обувь')]").click();
 
-        // Перейти на страницу второго элемента
-        $$(".products-list-item").get(0).click();
+        // Перейти на страницу первого элемента
+        $(".products-list-item").click();
 
         // Найти на странице кнопку с текстром "Добавить в корзину"
         $(".popover-target button").shouldHave(text("Добавить в корзину"));
