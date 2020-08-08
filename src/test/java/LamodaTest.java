@@ -1,3 +1,4 @@
+import com.codeborne.selenide.Selenide;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +12,7 @@ class LamodaTest {
     static String email = "test@test.ru";
     static String password = "1234567";
     static String name = "Test";
+    static String searchWord = "рубашка";
 
     @BeforeEach
     void siteOpen() {
@@ -19,71 +21,87 @@ class LamodaTest {
     }
 
     @Test
-    void findShoes() {
-        $(byXpath(".//a[@data-genders='men']")).click();
+    void checkButton() {
+        $("[data-genders='men']").click();
 
         // Перейти в раздел Обувь
-        $(byXpath(".//span[contains(text(),'Обувь')]")).click();
-
-        // Найти на странице текст Мужская обувь
-        $("html").shouldHave(text("Мужская обувь"));
+        $x("//*[@class='link' and contains(text(),'Обувь')]").click();
 
         // Перейти на страницу второго элемента
-        $$(byXpath(".//div[@class='products-list-item']"))
-                .get(1).click();
+        $$(".products-list-item").get(0).click();
+
+        // Найти на странице кнопку с текстром "Добавить в корзину"
+        $(".popover-target button").shouldHave(text("Добавить в корзину"));
     }
 
     @Test
-    void registration() {
+    void failedRegistration() {
         // Перейти по ссылке Войти
-        $(byXpath(".//span[contains(text(),'Войти')]")).click();
+        $(".js-auth-button").click();
 
         // Перейти по ссылке Создать аккаунт
-        $(byXpath(".//span[contains(text(),'Создать аккаунт')]")).click();
+        $(".login-form__register").click();
 
         // Заполнить форму
-        $$(byXpath(".//input[@name='email']")).find(visible).setValue(email);
-        $$(byXpath(".//input[@name='password']")).find(visible).setValue(password);
-        $$(byXpath(".//input[@name='password2']")).find(visible).setValue(password);
-        $$(byXpath(".//input[@name='first_name']")).find(visible).setValue(name);
+        $(".register-form__inner [name=email]").setValue(email);
+        $(".register-form__inner [name=password]").setValue(password);
+        $(".register-form__inner [name=password2]").setValue(password);
+        $(".register-form__inner [name=first_name]").setValue(name);
 
         // Нажать Зарегистрироваться
-        $(byXpath(".//button[contains(text(),'Зарегистрироваться')]")).click();
+        $(".js-registration-button").click();
+
+        $("#registration_recaptcha ~ .login-form__error")
+                .shouldHave(text("Другая учетная запись зарегистрирована на указанный адрес электронной почты."));
+
     }
 
     @Test
     void findShirt() {
         // Ввести в поле поиска "рубашка"
-        $(byXpath(".//input[@type='text']")).setValue("рубашка");
+        $x("//input[@type='text']").setValue(searchWord).pressEnter();
 
         // Нажать на иконку поиска
-        $(byXpath(".//div[@class='search__button-logo']")).click();
+        //$("a[role='button']").click();
 
         // Найти на странице текст товары по запросу «рубашка»
-        $("html").shouldHave(text("Товары по запросу «рубашка»"));
+        $(".title h2").shouldHave(text("Товары по запросу «" + searchWord + "»"));
     }
 
     @Test
     void regionChoice() {
         // Нажать на поле региона
-        $(byXpath(".//div[@class='v-popover']")).click();
+        $(".popover-target").click();
 
         // Нажать на ссылку Определить автоматически
-        $(byXpath(".//a[contains(text(),'Определить автоматически')]")).click();
+        $x("//a[contains(text(),'Москва')]").click();
 
         // Нажать на кнопку Запомнить выбор
-        $(byXpath(".//button[contains(text(),'Запомнить выбор')]")).click();
+        $(".x-button_accented").click();
+
+        // Проверить значение поля региона
+        $(".popover-target").shouldHave(text("Москва"));
+
     }
 
     @Test
     void onlineSupport() {
         // Нажать кнопку Хорошо
-        $(byXpath(".//button[contains(text(),'Хорошо')]")).click();
+        $(".x-button").click();
 
         // Нажать на кнопку Онлайн-консультант
-        $(byXpath(".//div[@id='hde-chat-widget']")).click();
+        $("#hde-chat-widget").click();
+
+        // Переключиться на фрейм окно
+        Selenide.switchTo().frame($("#hde-iframe"));
+
+        // Проверить наличие и текст кнопки "Отправить"
+        $(".el-button").shouldHave(text("Отправить"));
+
+        // Переключиться обратно
+        switchTo().defaultContent();
 
         // Нажать на иконку Закрыть
-        $(byXpath(".//div[contains(text(),'✕')]")).click();
+        $x("//div[contains(text(),'✕')]").click();
     }
 }
