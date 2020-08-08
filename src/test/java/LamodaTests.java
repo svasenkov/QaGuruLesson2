@@ -7,7 +7,7 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.*;
 import static com.codeborne.selenide.Selenide.*;
 
-class LamodaTest {
+class LamodaTests {
     static final String URL = "https://www.lamoda.ru/";
     static String email = "test@test.ru";
     static String password = "1234567";
